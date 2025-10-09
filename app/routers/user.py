@@ -11,7 +11,7 @@ router=APIRouter(prefix="/users",
 
 ###################################CREATING_USER######################################################################
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=User)
-async def create_user(user:CreateUser,db:Session=Depends(get_db)):
+def create_user(user:CreateUser,db:Session=Depends(get_db)):
             try:
                 #hash the password
                 hashed_password=utils.hash(user.password)
@@ -28,17 +28,17 @@ async def create_user(user:CreateUser,db:Session=Depends(get_db)):
                            detail="User with that email already exists."
                                      )
             except Exception as e:
-                db.rollback()
+                
                 raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 #######################SELECT_USER_ACCOUNT########################################################################################
 @router.get("/{id}",response_model=User)
-async def select_user(id:int,db:Session=Depends(get_db)):
+def select_user(id:int,db:Session=Depends(get_db)):
   try:
      post=db.query(models.User).filter(models.User.id==id).first()
      if post==None:
       raise HTTPException(status_code=404,detail=f"Cant find user related to id:{id}")
      return post
   except Exception as e:
-    db.rollback()
+    
     raise HTTPException(status_code=500,detail=str(e))
 #################################################################################################################
