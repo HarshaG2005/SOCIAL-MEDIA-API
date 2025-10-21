@@ -11,7 +11,9 @@ router=APIRouter(prefix="/posts",
                               )
 #####CREATE_POST####
 @router.post("/",response_model=Post)
-def create_post(post:CreatePost,db:Session=Depends(get_db),current_user:TokenData=Depends(app.oauth2.get_current_user)):
+def create_post(post:CreatePost,
+                db:Session=Depends(get_db),
+                current_user:TokenData=Depends(app.oauth2.get_current_user)):
     try:   
         new_post=app.models.Post(owner_id=current_user.id,**post.dict())
         db.add(new_post)
@@ -27,11 +29,15 @@ def create_post(post:CreatePost,db:Session=Depends(get_db),current_user:TokenDat
 #######SELECT_ALL##############
 
 @router.get('/',response_model=list[PostOut])
-def showall(db:Session=Depends(get_db),current_user:TokenData=Depends(app.oauth2.get_current_user),limit:int=10,skip:int=0,search:Optional[str]=""):
+def showall(db:Session=Depends(get_db),
+        current_user:TokenData=Depends(app.oauth2.get_current_user),
+        limit:int=10,
+        skip:int=0,
+        search:Optional[str]=""):
     try:
          #posts=db.query(models.Post).filter(models.Post.title.ilike(f"%{search}%")).limit(limit).offset(skip).all()
          results=db.query(app.models.Post,func.count(app.models.Vote.post_id)).join(app.models.Vote,app.models.Post.id==app.models.Vote.post_id,isouter=True).group_by(app.models.Post.id).filter(app.models.Post.title.ilike(f"%{search}%")).limit(limit).offset(skip).all()
-         print(results)
+         
          #return results
          return [{"post": post, "votes": votes} for post, votes in results]
 
@@ -57,7 +63,10 @@ def select(id:int,db:Session=Depends(get_db),current_user:TokenData=Depends(app.
         raise HTTPException(status_code=500,detail=str(e))   
 ##########UPDATING_POST##############
 @router.put("/{id}")
-def update_post(id:int,updated:CreatePost,db:Session=Depends(get_db),current_user:TokenData=Depends(app.oauth2.get_current_user)):
+def update_post(id:int,
+                updated:CreatePost,
+                db:Session=Depends(get_db),
+                current_user:TokenData=Depends(app.oauth2.get_current_user)):
   try:
     post_query=db.query(app.models.Post).filter(app.models.Post.id==id)
     post=post_query.first()
