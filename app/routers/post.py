@@ -1,11 +1,13 @@
 import app.models,app.oauth2
-from app.routers import auth
-from fastapi import FastAPI, HTTPException, Depends, status, APIRouter
-from app.schemas import CreatePost, Post,TokenData,PostOut
-from app.databases import get_db
-from sqlalchemy.orm import Session
-from typing import Optional
 from sqlalchemy import func
+from app.routers import auth
+from fastapi import FastAPI, HTTPException, Depends, status, APIRouter,Query
+from app.schemas import CreatePost, Post,TokenData,PostOut
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError  # ADD THIS
+from app.databases import get_db
+from typing import Optional
+
 router=APIRouter(prefix="/posts",
                    tags=["Posts"]
                               )
@@ -13,7 +15,7 @@ router=APIRouter(prefix="/posts",
 @router.post("/",response_model=Post)
 def create_post(post:CreatePost,
                 db:Session=Depends(get_db),
-                current_user:TokenData=Depends(app.oauth2.get_current_user))->{str,Post}:
+                current_user:TokenData=Depends(app.oauth2.get_current_user))->Post:
     """  Create a new post.
     Args:
         post:Post data
@@ -79,8 +81,8 @@ def get_all_posts(db:Session=Depends(get_db),
      
 #######SELECT_BY_ID###########
 @router.get("/{id}",response_model=PostOut)
-def select(id:int,db:Session=Depends(get_db),
-           current_user:TokenData=Depends(app.oauth2.get_current_user))->{str,PostOut}:
+def select_post_by_id(id:int,db:Session=Depends(get_db),
+           current_user:TokenData=Depends(app.oauth2.get_current_user))->PostOut:
     """  Retrieve a post by its ID.
     Args:
         id : Post ID
@@ -149,7 +151,7 @@ def delete_post(id:int,db:Session=Depends(get_db),
         id : Post ID
         db : database session 
         current user : Authenticated user
-        Returns:
+    Returns:
          A message confirming deletion
   """
   try:
