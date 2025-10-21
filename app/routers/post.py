@@ -1,8 +1,8 @@
-import models,oauth2
-from routers import auth
+import app.models,app.oauth2
+from app.routers import auth
 from fastapi import FastAPI, HTTPException, Depends, status, APIRouter
-from schemas import CreatePost, Post,TokenData,PostOut
-from databases import get_db
+from app.schemas import CreatePost, Post,TokenData,PostOut
+from app.databases import get_db
 from sqlalchemy.orm import Session
 from typing import Optional
 from sqlalchemy import func
@@ -11,9 +11,9 @@ router=APIRouter(prefix="/posts",
                               )
 #####CREATE_POST####
 @router.post("/",response_model=Post)
-def create_post(post:CreatePost,db:Session=Depends(get_db),current_user:TokenData=Depends(oauth2.get_current_user)):
+def create_post(post:CreatePost,db:Session=Depends(get_db),current_user:TokenData=Depends(app.oauth2.get_current_user)):
     try:   
-        new_post=models.Post(owner_id=current_user.id,**post.dict())
+        new_post=app.models.Post(owner_id=current_user.id,**post.dict())
         db.add(new_post)
         db.commit()
         db.refresh(new_post)
@@ -27,10 +27,10 @@ def create_post(post:CreatePost,db:Session=Depends(get_db),current_user:TokenDat
 #######SELECT_ALL##############
 
 @router.get('/',response_model=list[PostOut])
-def showall(db:Session=Depends(get_db),current_user:TokenData=Depends(oauth2.get_current_user),limit:int=10,skip:int=0,search:Optional[str]=""):
+def showall(db:Session=Depends(get_db),current_user:TokenData=Depends(app.oauth2.get_current_user),limit:int=10,skip:int=0,search:Optional[str]=""):
     try:
          #posts=db.query(models.Post).filter(models.Post.title.ilike(f"%{search}%")).limit(limit).offset(skip).all()
-         results=db.query(models.Post,func.count(models.Vote.post_id)).join(models.Vote,models.Post.id==models.Vote.post_id,isouter=True).group_by(models.Post.id).filter(models.Post.title.ilike(f"%{search}%")).limit(limit).offset(skip).all()
+         results=db.query(app.models.Post,func.count(app.models.Vote.post_id)).join(app.models.Vote,app.models.Post.id==app.models.Vote.post_id,isouter=True).group_by(app.models.Post.id).filter(app.models.Post.title.ilike(f"%{search}%")).limit(limit).offset(skip).all()
          print(results)
          #return results
          return [{"post": post, "votes": votes} for post, votes in results]
@@ -43,10 +43,10 @@ def showall(db:Session=Depends(get_db),current_user:TokenData=Depends(oauth2.get
      
 #######SELECT_BY_ID###########J
 @router.get("/{id}",response_model=PostOut)
-def select(id:int,db:Session=Depends(get_db),current_user:TokenData=Depends(oauth2.get_current_user)):
+def select(id:int,db:Session=Depends(get_db),current_user:TokenData=Depends(app.oauth2.get_current_user)):
     try:
         #post=db.query(models.Post).filter(models.Post.id==id).first()
-        post_=db.query(models.Post,func.count(models.Vote.post_id)).join(models.Vote,models.Post.id==models.Vote.post_id,isouter=True).group_by(models.Post.id).filter(models.Post.id==id).first()
+        post_=db.query(app.models.Post,func.count(app.models.Vote.post_id)).join(app.models.Vote,app.models.Post.id==app.models.Vote.post_id,isouter=True).group_by(app.models.Post.id).filter(app.models.Post.id==id).first()
         if post_==None:
            raise HTTPException(status_code=404,detail='post not found')
         post,votes=post_
@@ -57,9 +57,9 @@ def select(id:int,db:Session=Depends(get_db),current_user:TokenData=Depends(oaut
         raise HTTPException(status_code=500,detail=str(e))   
 ##########UPDATING_POST##############
 @router.put("/{id}")
-def update_post(id:int,updated:CreatePost,db:Session=Depends(get_db),current_user:TokenData=Depends(oauth2.get_current_user)):
+def update_post(id:int,updated:CreatePost,db:Session=Depends(get_db),current_user:TokenData=Depends(app.oauth2.get_current_user)):
   try:
-    post_query=db.query(models.Post).filter(models.Post.id==id)
+    post_query=db.query(app.models.Post).filter(app.models.Post.id==id)
     post=post_query.first()
     if post==None:
         raise HTTPException(status_code=404,detail=f"post with id:{id} does not exist!")
@@ -73,9 +73,9 @@ def update_post(id:int,updated:CreatePost,db:Session=Depends(get_db),current_use
     raise HTTPException(status_code=500,detail=str(e))
  ##############DELETE_POST################
 @router.delete("/{id}")
-def delete_post(id:int,db:Session=Depends(get_db),current_user:TokenData=Depends(oauth2.get_current_user)):
+def delete_post(id:int,db:Session=Depends(get_db),current_user:TokenData=Depends(app.oauth2.get_current_user)):
   try:
-    post_query=db.query(models.Post).filter(models.Post.id==id)
+    post_query=db.query(app.models.Post).filter(app.models.Post.id==id)
     post=post_query.first()
     if post==None:
         raise HTTPException(status_code=404,detail=f"post with id:{id} does not exist!")

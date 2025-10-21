@@ -1,12 +1,12 @@
 from fastapi import FastAPI,HTTPException,Depends,status
 import time
-import models 
-import utils
-from schemas import CreatePost,Post,User,CreateUser
-from databases import engine,SessionLocal
+import app.models 
+import app.utils
+from app.schemas import CreatePost,Post,User,CreateUser
+from app.databases import engine,SessionLocal
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from routers import post,user,auth,vote
+from app.routers import post,user,auth,vote
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 ############################INITIALIZING_SETUP###################################################################################################
-models.Base.metadata.create_all(bind=engine)
+app.models.Base.metadata.create_all(bind=engine)
 app=FastAPI()
 app.include_router(post.router)
 app.include_router(user.router)

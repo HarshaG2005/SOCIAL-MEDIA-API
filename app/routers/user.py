@@ -1,8 +1,8 @@
-import  models
-import utils
+import  app.models
+import app.utils
 from fastapi import FastAPI, HTTPException, Depends, status, APIRouter
-from schemas import CreateUser, User
-from databases import engine, get_db
+from app.schemas import CreateUser, User
+from app.databases import engine, get_db
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 router=APIRouter(prefix="/users",
@@ -14,9 +14,9 @@ router=APIRouter(prefix="/users",
 def create_user(user:CreateUser,db:Session=Depends(get_db)):
             try:
                 #hash the password
-                hashed_password=utils.hash(user.password)
+                hashed_password=app.utils.hash(user.password)
                 user.password=hashed_password
-                new_user=models.User(**user.model_dump())
+                new_user=app.models.User(**user.model_dump())
                 db.add(new_user)
                 db.commit()
                 db.refresh(new_user)
@@ -34,7 +34,7 @@ def create_user(user:CreateUser,db:Session=Depends(get_db)):
 @router.get("/{id}",response_model=User)
 def select_user(id:int,db:Session=Depends(get_db)):
   try:
-     post=db.query(models.User).filter(models.User.id==id).first()
+     post=db.query(app.models.User).filter(app.models.User.id==id).first()
      if post==None:
       raise HTTPException(status_code=404,detail=f"Cant find user related to id:{id}")
      return post

@@ -1,24 +1,25 @@
+
 from pydantic_settings import BaseSettings
-import os
-##########################################################
+from pathlib import Path
+from typing import Optional
+
 class Settings(BaseSettings):
-    database_hostname:str
-    database_port:str
-    database_password:str
-    database_name:str
-    database_username:str
-    secret_key:str
-    algorithm:str
-    access_token_expire_minutes:int
+    # Database fields - optional since DATABASE_URL might be used instead
+    database_hostname: Optional[str] = None
+    database_port: Optional[str] = None
+    database_password: Optional[str] = None
+    database_name: Optional[str] = None
+    database_username: Optional[str] = None
+    
+    # Required fields for JWT
+    secret_key: str
+    algorithm: str
+    access_token_expire_minutes: int
+    
     class Config:
-        env_file = os.path.join(os.path.dirname(__file__), ".env")  # always relative to config.py
+        # Get project root directory
+        env_file = Path(__file__).parent.parent / ".env"
+        env_file_encoding = "utf-8"
+        extra = 'ignore' 
 
-    # model_config = {
-    #     "env_file": ".env",
-    #     "env_file_encoding": "utf-8"
-    # }
-
-
-
-
-settings=Settings()
+settings = Settings()
