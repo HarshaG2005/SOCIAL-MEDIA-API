@@ -63,8 +63,20 @@ def get_all_posts(db:Session=Depends(get_db),
        """
         try:
          #posts=db.query(models.Post).filter(models.Post.title.ilike(f"%{search}%")).limit(limit).offset(skip).all()
-           results=db.query(app.models.Post,func.count(app.models.Vote.post_id)).join(app.models.Vote,app.models.Post.id==app.models.Vote.post_id,isouter=True).group_by(app.models.Post.id).filter(app.models.Post.title.ilike(f"%{search}%")).limit(limit).offset(skip).all()
-         
+           results=(
+            db.query(app.models.Post,func.count(app.models.Vote.post_id))
+            .join(
+              app.models.Vote,
+              app.models.Post.id==app.models.Vote.post_id,
+              isouter=True
+            )
+            .group_by(app.models.Post.id)
+            .filter(app.models.Post.title.ilike(f"%{search}%"))
+            .limit(limit)
+            .offset(skip)
+            .all()
+           )
+
          #return results
            return [{"post": post, "votes": votes} for post, votes in results]
 
@@ -93,7 +105,17 @@ def select_post_by_id(id:int,db:Session=Depends(get_db),
     """
     try:
         #post=db.query(models.Post).filter(models.Post.id==id).first()
-        post_=db.query(app.models.Post,func.count(app.models.Vote.post_id)).join(app.models.Vote,app.models.Post.id==app.models.Vote.post_id,isouter=True).group_by(app.models.Post.id).filter(app.models.Post.id==id).first()
+        post_=(
+          db.query(app.models.Post,func.count(app.models.Vote.post_id))
+          .join(
+            app.models.Vote,
+            app.models.Post.id==app.models.Vote.post_id,
+            isouter=True
+          )
+          .group_by(app.models.Post.id)
+          .filter(app.models.Post.id==id)
+          .first()
+          )
         if post_==None:
            raise HTTPException(status_code=404,detail='post not found')
         post,votes=post_
@@ -155,7 +177,10 @@ def delete_post(id:int,db:Session=Depends(get_db),
          A message confirming deletion
   """
   try:
-    post_query=db.query(app.models.Post).filter(app.models.Post.id==id)
+    post_query=(
+      db.query(app.models.Post)
+      .filter(app.models.Post.id==id)
+    )
     post=post_query.first()
     if post==None:
         raise HTTPException(status_code=404,detail=f"post with id:{id} does not exist!")

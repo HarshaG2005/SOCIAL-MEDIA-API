@@ -6,8 +6,25 @@ router=APIRouter(
     tags=['Vote']
 )
 @router.post('/',status_code=status.HTTP_201_CREATED)
-def vote(vote:app.schemas.Vote,db:Session=Depends(app.databases.get_db),current_user:int=Depends(app.oauth2.get_current_user)):
-    vote_query=db.query(app.models.Vote).filter(app.models.Vote.post_id==vote.post_id,app.models.Vote.user_id==current_user.id)
+def vote(vote:app.schemas.Vote,
+         db:Session=Depends(app.databases.get_db),
+         current_user:int=Depends(app.oauth2.get_current_user))->dict:
+    """ Cast or remove a vote on a post.
+    Args:
+        vote: Vote data containing post_id and direction
+        db: Database session
+        current_user: Authenticated user
+    Returns:
+        A message indicating the result of the vote operation
+    
+    """
+    vote_query=(
+        db.query(app.models.Vote)
+        .filter(
+            app.models.Vote.post_id==vote.post_id,
+            app.models.Vote.user_id==current_user.id
+            )
+        )
     found_vote=vote_query.first()
     if (vote.dir==1):
         if found_vote:

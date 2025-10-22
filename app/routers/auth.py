@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, status, APIRouter
 from app.databases import get_db
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 import app.models
 from app.schemas import UserLogin,Token
 from app.utils import verify
@@ -10,9 +11,21 @@ router=APIRouter(
     tags=["Authentication"]
 )
 @router.post("/login",response_model=Token)
-def login(user_credentials:OAuth2PasswordRequestForm=Depends(),db:Session=Depends(get_db)):
+def login(user_credentials:OAuth2PasswordRequestForm=Depends(),
+          db:Session=Depends(get_db))->Token:
+   """  Authenticate a user and generate an access token.
+   Args:
+         user_credentials: User login credentials
+         db: Database session
+   Returns:
+            Access token and token type
+   """
    try:
-       user=db.query(app.models.User).filter(app.models.User.email==user_credentials.username).first()
+       user=(
+        db.query(app.models.User)
+        .filter(app.models.User.email==user_credentials.username)
+        .first()
+        )
        if not user:
                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
        if not verify(user_credentials.password,user.password):
@@ -22,3 +35,5 @@ def login(user_credentials:OAuth2PasswordRequestForm=Depends(),db:Session=Depend
    except Exception as e:
         
         raise HTTPException(status_code=500, detail=str(e))
+   except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=f'Database error: {str(e)}')
