@@ -1,8 +1,5 @@
 import os
 os.environ["TESTING"] = "1"
-import logging
-logging.basicConfig(level=logging.DEBUG)
- 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -11,10 +8,6 @@ from app.databases import get_db, Base
 from app.oauth2 import get_current_user
 import app.models 
 from app.main import app as app1
-
-
-
-
 # Test database (SQLite for fast isolated tests)
 DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(
@@ -46,7 +39,7 @@ def setup_database():
     
     Base.metadata.create_all(bind=engine)
     
-    # ✅ CREATE A TEST USER IN THE DATABASE
+    #  CREATE A TEST USER IN THE DATABASE
     db = TestingSessionLocal()
     try:
         test_user = app.models.User(

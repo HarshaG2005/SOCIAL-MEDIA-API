@@ -5,7 +5,7 @@ def test_create_post(client_login):
         "/posts/",json={"title":"test post","content":"test content","published":True}
 
     )
-    print(res.text)
+    
 
     assert res.status_code==200
 
