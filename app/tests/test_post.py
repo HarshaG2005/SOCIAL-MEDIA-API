@@ -5,7 +5,10 @@ def test_create_post(client_login):
         "/posts/",json={"title":"test post","content":"test content","published":True}
 
     )
+    print(res.text)
+
     assert res.status_code==200
+
     new_post=res.json()
     assert new_post['title']=="test post"
     assert new_post['content']=="test content"
@@ -13,6 +16,7 @@ def test_create_post(client_login):
     assert 'id' in new_post
     assert 'owner_id' in new_post
     assert 'created_at' in new_post
+
 
 
 def test_get_all_post(client_login):
