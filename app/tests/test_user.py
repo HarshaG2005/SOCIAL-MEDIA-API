@@ -4,7 +4,7 @@ def test_create_user_and_select(client_login,client_real):
 
     # First, create a user to ensure there is one to retrieve
     create_response = client_real.post('/users/', json={
-        "email": f'test1@gmail.com',
+        "email": 'test1@gmail.com',
         "password": 'test123'
     })
     assert create_response.status_code == 201
