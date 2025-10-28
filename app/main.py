@@ -35,3 +35,4 @@ app.add_middleware(
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+

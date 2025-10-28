@@ -8,6 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError  # ADD THIS
 from app.databases import get_db
 from typing import Optional
 
+
 router=APIRouter(prefix="/posts",
                    tags=["Posts"]
                               )
@@ -26,7 +27,7 @@ def create_post(post:CreatePost,
 
     """
     try:   
-        new_post=app.models.Post(owner_id=current_user.id,**post.dict())
+        new_post=app.models.Post(owner_id=current_user.id,**post.model_dump())
         db.add(new_post)
         db.commit()
         db.refresh(new_post)
@@ -104,7 +105,10 @@ def select_post_by_id(id:int,db:Session=Depends(get_db),
         The post with its vote count
     """
     try:
-        #post=db.query(models.Post).filter(models.Post.id==id).first()
+        post_query = db.query(app.models.Post).filter(app.models.Post.id == id).first()
+        if not post_query:
+            
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id:{id} not found")
         post_=(
           db.query(app.models.Post,func.count(app.models.Vote.post_id))
           .join(
@@ -116,11 +120,14 @@ def select_post_by_id(id:int,db:Session=Depends(get_db),
           .filter(app.models.Post.id==id)
           .first()
           )
-        if post_==None:
-           raise HTTPException(status_code=404,detail='post not found')
+        
+        if post_ is None:
+           raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='post not found')
         post,votes=post_
         return {'post':post,'votes':votes}
-        
+    except HTTPException:
+        # Re-raise HTTPException as-is (don't catch and convert to 500!)
+        raise
     except SQLAlchemyError as e:
       db.rollback()
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))
@@ -152,7 +159,7 @@ def update_post(id:int,
         raise HTTPException(status_code=404,detail=f"post with id:{id} does not exist!")
     if post.owner_id != current_user.id:
       raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="NOT AUTHORIZED TO PERFORM REQUESTED ACTION")
-    post_query.update(updated.dict(),synchronize_session=False)
+    post_query.update(updated.model_dump(),synchronize_session=False)
     db.commit()
     return {"new":post_query.first()}
   except SQLAlchemyError as e:
@@ -188,7 +195,7 @@ def delete_post(id:int,db:Session=Depends(get_db),
       raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Not authorized to perform requested action")
     post_query.delete(synchronize_session=False) 
     db.commit()
-    return {"message":f"post with id:{id} got deleted"}
+    return {"message":"post deleted successfully"}
   except SQLAlchemyError as e:
       db.rollback()
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))

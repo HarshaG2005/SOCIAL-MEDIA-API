@@ -61,6 +61,8 @@ def select_user(id:int,db:Session=Depends(get_db))->User:
       raise HTTPException(status_code=404,detail=f"Cant find user related to id:{id}")
      return post
   except Exception as e:
+    raise
+  except Exception as e:
     
     raise HTTPException(status_code=500,detail=str(e))
   except SQLAlchemyError as e:
