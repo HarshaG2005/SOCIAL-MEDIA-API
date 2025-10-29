@@ -1,23 +1,29 @@
 import app.models,app.oauth2
 from sqlalchemy import func
 from app.routers import auth
-from fastapi import FastAPI, HTTPException, Depends, status, APIRouter,Query
+from fastapi import FastAPI, HTTPException, Depends, status, APIRouter,Query,Request
 from app.schemas import CreatePost, Post,TokenData,PostOut
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError  # ADD THIS
+from sqlalchemy.exc import SQLAlchemyError  
 from app.databases import get_db
+from slowapi import Limiter  
+from slowapi.util import get_remote_address
 from typing import Optional
 
 
 router=APIRouter(prefix="/posts",
                    tags=["Posts"]
                               )
+limiter = Limiter(key_func=get_remote_address)
 #####CREATE_POST####
 @router.post("/",response_model=Post)
-def create_post(post:CreatePost,
+@limiter.limit("10/minute")
+def create_post(request: Request,
+                post:CreatePost,
                 db:Session=Depends(get_db),
                 current_user:TokenData=Depends(app.oauth2.get_current_user))->Post:
     """  Create a new post.
+         Rate Limit: 10 requests per minute
     Args:
         post:Post data
         db: Database session
@@ -32,6 +38,8 @@ def create_post(post:CreatePost,
         db.commit()
         db.refresh(new_post)
         return new_post
+    except HTTPException:
+        raise
     except SQLAlchemyError as e:
       db.rollback()
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))
@@ -44,14 +52,15 @@ def create_post(post:CreatePost,
 #######SELECT_ALL##############
 
 @router.get('/',response_model=list[PostOut])
-def get_all_posts(db:Session=Depends(get_db),
+def get_all_posts(request: Request,
+        db:Session=Depends(get_db),
         current_user:TokenData=Depends(app.oauth2.get_current_user),
         limit:int=Query(default=10, ge=1, le=100),
         skip:int=Query(default=0,ge=0),
         search:Optional[str]="")->list[PostOut]:
         """
         Retrieve all posts with vote counts.
-    
+        
         Args:
         db: Database session
         current_user: Authenticated user
@@ -81,7 +90,8 @@ def get_all_posts(db:Session=Depends(get_db),
          #return results
            return [{"post": post, "votes": votes} for post, votes in results]
 
-        
+        except HTTPException:
+          raise
         except SQLAlchemyError as e:
          db.rollback()
          raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))
@@ -94,8 +104,10 @@ def get_all_posts(db:Session=Depends(get_db),
      
 #######SELECT_BY_ID###########
 @router.get("/{id}",response_model=PostOut)
-def select_post_by_id(id:int,db:Session=Depends(get_db),
-           current_user:TokenData=Depends(app.oauth2.get_current_user))->PostOut:
+def select_post_by_id(
+                      id:int,
+                      db:Session=Depends(get_db),
+                      current_user:TokenData=Depends(app.oauth2.get_current_user))->PostOut:
     """  Retrieve a post by its ID.
     Args:
         id : Post ID
@@ -139,11 +151,14 @@ def select_post_by_id(id:int,db:Session=Depends(get_db),
    
 ##########UPDATING_POST##############
 @router.put("/{id}")
-def update_post(id:int,
+@limiter.limit("5/minute")
+def update_post(request: Request,
+                id:int,
                 updated:CreatePost,
                 db:Session=Depends(get_db),
                 current_user:TokenData=Depends(app.oauth2.get_current_user))->dict[str,Post]:
   """  Update a post by its ID
+      Rate Limit: 5 requests per minute
     Args:
         id : Post ID
         updated: Updated post data
@@ -162,6 +177,8 @@ def update_post(id:int,
     post_query.update(updated.model_dump(),synchronize_session=False)
     db.commit()
     return {"new":post_query.first()}
+  except HTTPException:
+      raise
   except SQLAlchemyError as e:
       db.rollback()
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))
@@ -196,6 +213,8 @@ def delete_post(id:int,db:Session=Depends(get_db),
     post_query.delete(synchronize_session=False) 
     db.commit()
     return {"message":"post deleted successfully"}
+  except HTTPException:
+      raise
   except SQLAlchemyError as e:
       db.rollback()
       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))

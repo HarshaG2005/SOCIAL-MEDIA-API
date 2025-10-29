@@ -1,15 +1,22 @@
-from fastapi import FastAPI,Response,status,HTTPException,Depends,APIRouter
+from fastapi import FastAPI,Response,status,HTTPException,Depends,APIRouter,Request
 import app.schemas,app.databases,app.models,app.oauth2
 from sqlalchemy.orm import Session
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 router=APIRouter(
     prefix='/vote',
     tags=['Vote']
 )
+limiter = Limiter(key_func=get_remote_address)
 @router.post('/',status_code=status.HTTP_201_CREATED)
-def vote(vote:app.schemas.Vote,
+@limiter.limit("20/minute")
+def vote(request: Request,
+         vote:app.schemas.Vote,
          db:Session=Depends(app.databases.get_db),
-         current_user:int=Depends(app.oauth2.get_current_user))->dict:
-    """ Cast or remove a vote on a post.
+         current_user:int=Depends(app.oauth2.get_current_user),
+           )->dict:
+  """ Cast or remove a vote on a post.
+        Rate Limit: 10 requests per minute
     Args:
         vote: Vote data containing post_id and direction
         db: Database session
@@ -17,7 +24,8 @@ def vote(vote:app.schemas.Vote,
     Returns:
         A message indicating the result of the vote operation
     
-    """
+  """
+  try:
     vote_query=(
         db.query(app.models.Vote)
         .filter(
@@ -39,4 +47,10 @@ def vote(vote:app.schemas.Vote,
         vote_query.delete(synchronize_session=False)
         db.commit()
         return {"message":f"Successfully removed vote for post:{vote.post_id}"}
+  except HTTPException:
+    raise
+  except SQLAlchemyError as e:
+    raise
+  except Exception as e:
+    raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))
     
