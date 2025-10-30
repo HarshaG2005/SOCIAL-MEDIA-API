@@ -2,6 +2,9 @@ from pydantic import BaseModel,Field,ConfigDict,EmailStr,conint
 from pydantic import field_validator
 from typing import Optional
 from datetime import datetime
+############################SCHEMA_DEFINITIONS##############################################################
+# Schemas for request and response models
+
 class CreatePost(BaseModel):
     title:str=Field(
         max_length=300
@@ -12,7 +15,6 @@ class CreatePost(BaseModel):
     published:bool=Field(
         default=True
     )
-
 class User(BaseModel):
     id:int
     email:EmailStr
@@ -37,10 +39,6 @@ class CreateUser(BaseModel):
         if len(v)<6:
             raise ValueError('password must be at least 6 characters long')
         return v
-     
-     
-
-
 
 class UserLogin(BaseModel):
     email:EmailStr
