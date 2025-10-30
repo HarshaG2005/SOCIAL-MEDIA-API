@@ -50,7 +50,8 @@ def vote(request: Request,
   except HTTPException:
     raise
   except SQLAlchemyError as e:
-    raise
+    db.rollback()
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e)) 
   except Exception as e:
     raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))
     

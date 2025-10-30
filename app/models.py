@@ -4,10 +4,12 @@ from sqlalchemy.sql.expression import null
 from sqlalchemy.orm import relationship
 import os
 from sqlalchemy.sql.functions import func
+###################################DEFINING_DEFAULT_TIMESTAMP_BASED_ON_ENVIRONMENT##########################################
 if os.getenv("TESTING"):
     default_timestamp = text("CURRENT_TIMESTAMP")   # SQLite-friendly
 else:
     default_timestamp = func.now() 
+###################################MODELS_DEFINITION##############################################################
 class Post(Base):
     __tablename__="posts"
     id=Column(Integer,primary_key=True,nullable=False)
