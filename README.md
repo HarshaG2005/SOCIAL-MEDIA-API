@@ -87,7 +87,7 @@ A production-ready REST API for social media functionality built with FastAPI, P
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/SOCIAL-MEDIA-API.git
+git clone https://github.com/HarshaG2005/SOCIAL-MEDIA-API.git
 cd SOCIAL-MEDIA-API
 ```
 
