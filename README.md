@@ -6,6 +6,12 @@ A production-ready REST API for social media functionality built with FastAPI, P
 [![FastAPI](https://img.shields.io/badge/FastAPI-latest-green.svg)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-latest-blue.svg)](https://www.postgresql.org/)
 
+## 🌐 Live Demo
+
+**API Base URL:** [https://project1.fly.dev](https://project1.fly.dev)  
+**API Documentation:** [https://project1.fly.dev/docs](https://project1.fly.dev/docs) (Interactive Swagger UI)  
+**Health Check:** [https://project1.fly.dev/health](https://project1.fly.dev/health)
+
 ## 🚀 Features
 
 - **User Authentication & Authorization**
@@ -81,7 +87,7 @@ A production-ready REST API for social media functionality built with FastAPI, P
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/HarshaG2005/SOCIAL-MEDIA-API.git
+git clone https://github.com/yourusername/SOCIAL-MEDIA-API.git
 cd SOCIAL-MEDIA-API
 ```
 
