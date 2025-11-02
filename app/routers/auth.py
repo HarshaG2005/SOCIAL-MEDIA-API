@@ -20,7 +20,8 @@ def login(request: Request,
           db:Session=Depends(get_db))->Token:
    """  Authenticate a user and generate an access token.
         Rate Limit: 5 requests per minute
-   Args:
+   Args: 
+         request: HTTP request object
          user_credentials: User login credentials
          db: Database session
    Returns:
