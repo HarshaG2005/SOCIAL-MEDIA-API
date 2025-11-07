@@ -18,7 +18,7 @@ limiter = Limiter(key_func=get_remote_address)
 #####CREATE_POST####
 @router.post("/",response_model=Post)
 @limiter.limit("10/minute")
-def create_post(request: Request,
+async def create_post(request: Request,
                 post:CreatePost,
                 db:Session=Depends(get_db),
                 current_user:TokenData=Depends(app.oauth2.get_current_user))->Post:
@@ -52,7 +52,7 @@ def create_post(request: Request,
 #######SELECT_ALL##############
 
 @router.get('/',response_model=list[PostOut])
-def get_all_posts(request: Request,
+async def get_all_posts(request: Request,
         db:Session=Depends(get_db),
         current_user:TokenData=Depends(app.oauth2.get_current_user),
         limit:int=Query(default=10, ge=1, le=100),
@@ -104,7 +104,7 @@ def get_all_posts(request: Request,
      
 #######SELECT_BY_ID###########
 @router.get("/{id}",response_model=PostOut)
-def select_post_by_id(
+async def select_post_by_id(
                       id:int,
                       db:Session=Depends(get_db),
                       current_user:TokenData=Depends(app.oauth2.get_current_user))->PostOut:
@@ -122,6 +122,7 @@ def select_post_by_id(
             
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id:{id} not found")
         post_=(
+
           db.query(app.models.Post,func.count(app.models.Vote.post_id))
           .join(
             app.models.Vote,
@@ -152,7 +153,7 @@ def select_post_by_id(
 ##########UPDATING_POST##############
 @router.put("/{id}")
 @limiter.limit("5/minute")
-def update_post(request: Request,
+async def update_post(request: Request,
                 id:int,
                 updated:CreatePost,
                 db:Session=Depends(get_db),
@@ -190,7 +191,7 @@ def update_post(request: Request,
 
  ##############DELETE_POST################
 @router.delete("/{id}")
-def delete_post(id:int,db:Session=Depends(get_db),
+async def delete_post(id:int,db:Session=Depends(get_db),
                 current_user:TokenData=Depends(app.oauth2.get_current_user))->dict[str,str]:
   """ Delete a post by its ID
     Args:
