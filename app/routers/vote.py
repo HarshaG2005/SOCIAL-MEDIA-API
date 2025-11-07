@@ -10,7 +10,7 @@ router=APIRouter(
 limiter = Limiter(key_func=get_remote_address)
 @router.post('/',status_code=status.HTTP_201_CREATED)
 @limiter.limit("20/minute")
-def vote(request: Request,
+async def vote(request: Request,
          vote:app.schemas.Vote,
          db:Session=Depends(app.databases.get_db),
          current_user:int=Depends(app.oauth2.get_current_user),

@@ -15,7 +15,7 @@ router=APIRouter(
 limiter = Limiter(key_func=get_remote_address)# Rate limiter instance
 @router.post("/login",response_model=Token)
 @limiter.limit("5/minute")# Rate limit: 5 requests per minute
-def login(request: Request,
+async def login(request: Request,
           user_credentials:OAuth2PasswordRequestForm=Depends(),
           db:Session=Depends(get_db))->Token:
    """  Authenticate a user and generate an access token.
