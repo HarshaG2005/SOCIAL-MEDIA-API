@@ -1,6 +1,5 @@
 from fastapi import (APIRouter, Depends, FastAPI, HTTPException, Request,
                      Response, status)
-from app.rate_limiter import limiter
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -8,9 +7,9 @@ import app.databases
 import app.models
 import app.oauth2
 import app.schemas
+from app.rate_limiter import limiter
 
 router = APIRouter(prefix="/vote", tags=["Vote"])
-limiter = Limiter(key_func=get_remote_address)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

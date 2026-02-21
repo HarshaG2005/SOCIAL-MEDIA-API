@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
-from app.rate_limiter import limiter
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
+
 import app.models
 import app.utils
 from app.databases import engine, get_db
+from app.rate_limiter import limiter
 from app.schemas import CreateUser, User
 
 router = APIRouter(prefix="/users", tags=["Users"])
-
 
 
 ###################################CREATING_USER####################
