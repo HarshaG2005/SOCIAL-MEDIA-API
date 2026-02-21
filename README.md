@@ -6,9 +6,8 @@ A production-ready REST API for social media functionality built with FastAPI, P
 [![FastAPI](https://img.shields.io/badge/FastAPI-latest-green.svg)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-latest-blue.svg)](https://www.postgresql.org/)
 
-## 🌐 Live Demo
-**Disclaimer** I took down deployed api because of financial issues,I will try to deploy it with more features in future😁
-
+## 🌐 Deployment
+**Currently Offline**
 
 
 ## 🚀 Features
@@ -78,7 +77,7 @@ A production-ready REST API for social media functionality built with FastAPI, P
 ## 🔧 Installation & Setup
 
 ### Prerequisites
-- Python 3.13+
+- Python 3.11+
 - PostgreSQL
 - Docker (optional)
 

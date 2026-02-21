@@ -23,3 +23,4 @@ Thumbs.db
 docker-compose.yml
 #
 sqlite.db
+test.db
