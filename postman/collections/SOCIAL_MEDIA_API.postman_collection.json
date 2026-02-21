@@ -1,0 +1,245 @@
+{
+  "info": {
+    "_postman_id": "d2225b60-e410-43c7-bbd5-486217815cff",
+    "name": "SOCIAL_MEDIA_API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Creating a user account",
+      "id": "17b9e31f-f4e2-4591-90a2-7b66410a58a2",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\":\"test01@gmail.com\",\r\n    \"password\":\"testPass\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}users/",
+          "host": [
+            "{{base_url}}users"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Logging to user's account",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "7bad132b-8664-4fb8-82e3-93c53d98e463",
+            "exec": [
+              "pm.environment.set(\"jwt_token\", pm.response.json().access_token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "c13d102c-90d1-485e-9f91-c140fd1076f0",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "username",
+              "value": "test01@gmail.com",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "testPass",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}login/",
+          "host": [
+            "{{base_url}}login"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Select a user from id",
+      "id": "9c10f2d1-60f7-47b5-8d4c-fc785f97b434",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Creating a post",
+      "id": "6e01cdf9-66cc-44a6-9632-a86a519a8db9",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Selecting all posts",
+      "id": "880a464a-f445-43f1-9c98-c86a224f29e6",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}posts/",
+          "host": [
+            "{{base_url}}posts"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update a post",
+      "id": "ce366322-5ab2-4230-bfd5-76c1c2d10846",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\":\"updated this post\",\r\n    \"content\":\"test post updated\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}posts/138",
+          "host": [
+            "{{base_url}}posts"
+          ],
+          "path": [
+            "138"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete a post",
+      "id": "b8a2a12c-2b81-4f60-a9a5-93e6bfec88ab",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\":\"updated this post\",\r\n    \"content\":\"test post updated\"\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}posts/138",
+          "host": [
+            "{{base_url}}posts"
+          ],
+          "path": [
+            "138"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Voting a post",
+      "id": "bbc0c527-923c-4169-9173-3f8b37599ae1",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"post_id\":137,\r\n    \"dir\":1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}vote/",
+          "host": [
+            "{{base_url}}vote"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -27,6 +27,7 @@ async def create_user(
     """
     try:
         # hash the password
+        print(user.password)
         hashed_password = app.utils.hash(user.password)
         user.password = hashed_password
         new_user = app.models.User(**user.model_dump())
