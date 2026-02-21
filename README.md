@@ -7,10 +7,9 @@ A production-ready REST API for social media functionality built with FastAPI, P
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-latest-blue.svg)](https://www.postgresql.org/)
 
 ## 🌐 Live Demo
+**Disclaimer** I took down deployed api because of financial issues,I will try to deploy it with more features in future😁
 
-**API Base URL:** [https://project1.fly.dev](https://project1.fly.dev)  
-**API Documentation:** [https://project1.fly.dev/docs](https://project1.fly.dev/docs) (Interactive Swagger UI)  
-**Health Check:** [https://project1.fly.dev/health](https://project1.fly.dev/health)
+
 
 ## 🚀 Features
 
