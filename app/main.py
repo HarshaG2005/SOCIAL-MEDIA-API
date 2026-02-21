@@ -1,12 +1,10 @@
 import time
-
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-
 import app.models
 import app.utils
 from app.databases import SessionLocal, engine

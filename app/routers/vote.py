@@ -2,7 +2,6 @@ from fastapi import (APIRouter, Depends, FastAPI, HTTPException, Request,
                      Response, status)
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-
 import app.databases
 import app.models
 import app.oauth2

@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta, timezone
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-
 import app.models
 from app.config import settings
 from app.databases import get_db
