@@ -1,13 +1,8 @@
 import time
-
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-
 import app.models
 import app.utils
 from app.databases import SessionLocal, engine
@@ -15,12 +10,9 @@ from app.routers import auth, post, user, vote
 from app.schemas import CreatePost, CreateUser, Post, User
 
 ############################INITIALIZING_SETUP###################################################################################################
-app.models.Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
-#  ADD RATE LIMITER
-limiter = Limiter(key_func=get_remote_address)
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # INCLUDE ROUTERS
 app.include_router(post.router)
 app.include_router(user.router)

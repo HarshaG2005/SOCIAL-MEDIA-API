@@ -21,3 +21,5 @@ Thumbs.db
 .pytest_cache/
 #
 docker-compose.yml
+#
+sqlite.db

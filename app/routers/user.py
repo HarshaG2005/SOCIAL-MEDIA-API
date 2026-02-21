@@ -1,16 +1,14 @@
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+from app.rate_limiter import limiter
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
-
 import app.models
 import app.utils
 from app.databases import engine, get_db
 from app.schemas import CreateUser, User
 
 router = APIRouter(prefix="/users", tags=["Users"])
-limiter = Limiter(key_func=get_remote_address)
+
 
 
 ###################################CREATING_USER####################

@@ -1,7 +1,7 @@
 from fastapi import (APIRouter, Depends, FastAPI, HTTPException, Request,
                      Response, status)
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+from app.rate_limiter import limiter
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 import app.databases

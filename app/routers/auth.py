@@ -1,19 +1,14 @@
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-
 import app.models
 from app.databases import get_db
 from app.oauth2 import create_access_token
 from app.schemas import Token, UserLogin
 from app.utils import verify
-
+from app.rate_limiter import limiter
 router = APIRouter(tags=["Authentication"])
-limiter = Limiter(key_func=get_remote_address)  # Rate limiter instance
-
 
 @router.post("/login", response_model=Token)
 @limiter.limit("5/minute")  # Rate limit: 5 requests per minute
@@ -47,10 +42,9 @@ async def login(
             )
         access_token = create_access_token(data={"user_id": user.id})
         return {"access_token": access_token, "token_type": "bearer"}
-    except HTTPException as e:
-        raise e
+    except HTTPException :
+        raise 
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Database error: {str(e)}")
     except Exception as e:
-
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -1,13 +1,10 @@
 from typing import Optional
-
 from fastapi import (APIRouter, Depends, FastAPI, HTTPException, Query,
                      Request, status)
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+from app.rate_limiter import limiter
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-
 import app.models
 import app.oauth2
 from app.databases import get_db
@@ -15,7 +12,7 @@ from app.routers import auth
 from app.schemas import CreatePost, Post, PostOut, TokenData
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
-limiter = Limiter(key_func=get_remote_address)
+
 
 
 #####CREATE_POST####
