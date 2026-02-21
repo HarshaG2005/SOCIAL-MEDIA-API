@@ -1,31 +1,51 @@
-from app.databases import Base
-from sqlalchemy import Column,Integer,String,Boolean,text,TIMESTAMP,ForeignKey
-from sqlalchemy.sql.expression import null
-from sqlalchemy.orm import relationship
 import os
+
+from sqlalchemy import (TIMESTAMP, Boolean, Column, ForeignKey, Integer,
+                        String, text)
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.functions import func
+
+from app.databases import Base
+
 ###################################DEFINING_DEFAULT_TIMESTAMP_BASED_ON_ENVIRONMENT##########################################
 if os.getenv("TESTING"):
-    default_timestamp = text("CURRENT_TIMESTAMP")   # SQLite-friendly
+    default_timestamp = text("CURRENT_TIMESTAMP")  # SQLite-friendly
 else:
-    default_timestamp = func.now() 
+    default_timestamp = func.now()
+
+
 ###################################MODELS_DEFINITION##############################################################
 class Post(Base):
-    __tablename__="posts"
-    id=Column(Integer,primary_key=True,nullable=False)
-    title=Column(String,nullable=False)
-    content=Column(String,nullable=False)
-    published=Column(Boolean,server_default=text("TRUE"))
-    created_at=Column(TIMESTAMP(timezone=True),nullable=False,server_default=default_timestamp)#text("now()")
-    owner_id=Column(Integer,ForeignKey('users.id',ondelete="CASCADE"),nullable=False)
-    owner=relationship("User")
+    __tablename__ = "posts"
+    id = Column(Integer, primary_key=True, nullable=False)
+    title = Column(String, nullable=False)
+    content = Column(String, nullable=False)
+    published = Column(Boolean, server_default=text("TRUE"))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=default_timestamp
+    )  # text("now()")
+    owner_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    owner = relationship("User")
+
+
 class User(Base):
-    __tablename__='users'
-    id=Column(Integer,primary_key=True,nullable=False)
-    email=Column(String,nullable=False,unique=True)
-    password=Column(String,nullable=False)
-    created_at=Column(TIMESTAMP(timezone=True),nullable=False,server_default=default_timestamp)
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=default_timestamp
+    )
+
+
 class Vote(Base):
-    __tablename__='votes'
-    post_id=Column(Integer,ForeignKey('posts.id',ondelete='CASCADE'),primary_key=True)
-    user_id=Column(Integer,ForeignKey('users.id',ondelete='CASCADE'),primary_key=True)
+    __tablename__ = "votes"
+    post_id = Column(
+        Integer, ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True
+    )
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
