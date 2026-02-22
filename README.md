@@ -6,11 +6,6 @@ A production-ready REST API for social media functionality built with FastAPI, P
 [![FastAPI](https://img.shields.io/badge/FastAPI-latest-green.svg)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-latest-blue.svg)](https://www.postgresql.org/)
 
-## 🌐 Live Demo
-**Disclaimer** I took down deployed api because of financial issues,I will try to deploy it with more features in future😁
-
-
-
 ## 🚀 Features
 
 - **User Authentication & Authorization**
@@ -170,7 +165,7 @@ Test coverage includes:
 - post_id (Primary Key, Foreign Key → Posts)
 - user_id (Primary Key, Foreign Key → Users)
 
-## 🚢 Deployment
+## 🚢 Deployment(Currently Offline)
 
 This project includes automated deployment to Fly.io via GitHub Actions.
 
@@ -193,7 +188,9 @@ SOCIAL-MEDIA-API/
 │   ├── oauth2.py        # JWT authentication
 │   ├── databases.py     # Database connection
 │   ├── config.py        # Configuration management
+|   |── rate_limiting.py # Rate Limiter
 │   └── utils.py         # Utility functions
+|──Postman/
 ├── Dockerfile
 ├── requirements.txt
 └── fly.toml
