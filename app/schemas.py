@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import (BaseModel, ConfigDict, EmailStr, Field, conint,
-                      field_validator)
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, conint, field_validator
 
 ############################SCHEMA_DEFINITIONS##############################################################
 # Schemas for request and response models
