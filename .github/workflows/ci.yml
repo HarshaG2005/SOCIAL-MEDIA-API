@@ -32,7 +32,7 @@ jobs:
 
       - name: Run tests
         env:
-          SECRET_KEY: "test-secret"
+          SECRET_KEY: "test-secret-key"
           ALGORITHM: "HS256"
           ACCESS_TOKEN_EXPIRE_MINUTES: "30"
         run: pytest
