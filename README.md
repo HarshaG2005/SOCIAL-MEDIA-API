@@ -168,7 +168,9 @@ Test coverage includes:
 ## 🚢 Deployment(Currently Offline)
 
 This project includes automated deployment to Fly.io via GitHub Actions.
+
 **Docker-compose Instructions(Local Deployment)**
+
 ```bash
 docker compose up --build
 ```
