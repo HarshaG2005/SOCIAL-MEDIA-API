@@ -1,5 +1,4 @@
-pytest
-black
-isort
-flake8
-mypy
+pytest==8.4.2
+black==26.1.0
+isort==8.0.0
+httpx==0.28.1
