@@ -1,6 +1,7 @@
 import os
 
-from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, Integer, String, text
+from sqlalchemy import (TIMESTAMP, Boolean, Column, ForeignKey, Integer,
+                        String, text)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.functions import func
