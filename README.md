@@ -208,7 +208,16 @@ SOCIAL-MEDIA-API/
 - SQL injection prevention via ORM
 - Owner-based authorization for post modifications
 - CORS protection
+## 📫 Postman Collection
 
+Import the collection:
+`postman/social_media_api.postman_collection.json`
+
+Base URL:
+`http://localhost:8000`
+
+If using auth-protected endpoints, set:
+`Authorization: Bearer <token>`
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
