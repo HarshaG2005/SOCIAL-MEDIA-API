@@ -24,3 +24,5 @@ docker-compose.yml
 #
 sqlite.db
 test.db
+#
+.postman/
