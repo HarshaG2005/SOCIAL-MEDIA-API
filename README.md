@@ -6,10 +6,6 @@ A production-ready REST API for social media functionality built with FastAPI, P
 [![FastAPI](https://img.shields.io/badge/FastAPI-latest-green.svg)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-latest-blue.svg)](https://www.postgresql.org/)
 
-## 🌐 Deployment
-**Currently Offline**
-
-
 ## 🚀 Features
 
 - **User Authentication & Authorization**
@@ -79,7 +75,7 @@ A production-ready REST API for social media functionality built with FastAPI, P
 ### Prerequisites
 - Python 3.11+
 - PostgreSQL
-- Docker (optional)
+- Docker
 
 ### Local Setup
 
@@ -172,6 +168,12 @@ Test coverage includes:
 ## 🚢 Deployment(Currently Offline)
 
 This project includes automated deployment to Fly.io via GitHub Actions.
+**Docker-compose Instructions(Local Deployment)**
+```bash
+docker compose up --build
+```
+- Api Docs
+  http://localhost:8000/docs
 
 **Deployment workflow:**
 - Push to `main` branch triggers automatic deployment
